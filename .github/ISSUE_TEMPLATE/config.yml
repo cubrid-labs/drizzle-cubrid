@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Drizzle ORM Documentation
+    url: https://orm.drizzle.team/
+    about: Official Drizzle ORM documentation
+  - name: CUBRID Documentation
+    url: https://cubrid.org/documentation
+    about: Official CUBRID database documentation
+  - name: cubrid-cookbook
+    url: https://github.com/cubrid-labs/cubrid-cookbook
+    about: Production-ready examples for CUBRID with popular frameworks
