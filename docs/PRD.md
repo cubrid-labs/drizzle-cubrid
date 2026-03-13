@@ -188,3 +188,89 @@ Semantic versioning: `{major}.{minor}.{patch}`
 6. Integration tests pass against CUBRID Docker container
 7. Package builds cleanly as ESM + CJS
 8. TypeScript strict mode with zero type errors
+
+---
+
+## Example-first Design Philosophy
+
+### Why Example-first
+
+CUBRID's ecosystem is small compared to PostgreSQL or MySQL. For a small-ecosystem
+project, the entry barrier must be minimized — users should be able to copy-paste
+working code within 30 seconds of reading the documentation.
+
+> Because the ecosystem is still small, the project provides extensive examples
+> and cookbook-style documentation to lower the adoption barrier.
+
+### Hello World
+
+```bash
+npm install drizzle-cubrid drizzle-orm cubrid-client
+```
+
+```typescript
+import { createClient } from 'cubrid-client';
+import { drizzle } from 'drizzle-cubrid';
+import { cubridTable, int, varchar } from 'drizzle-cubrid';
+
+// Define schema
+const users = cubridTable('users', {
+  id: int('id').primaryKey().autoincrement(),
+  name: varchar('name', { length: 100 }).notNull(),
+  email: varchar('email', { length: 200 }).unique(),
+});
+
+// Connect
+const client = createClient({
+  host: 'localhost',
+  port: 33000,
+  database: 'demodb',
+  user: 'dba',
+});
+const db = drizzle(client);
+
+// Query
+const allUsers = await db.select().from(users);
+console.log(allUsers);
+
+await client.close();
+```
+
+This code defines a typed schema, connects to CUBRID, and queries all users —
+with full TypeScript type safety, no code generation, no configuration files.
+
+### AI Agent Discoverability
+
+Modern developers increasingly rely on AI coding assistants — Claude Code, OpenCode,
+Cursor, GitHub Copilot, Devin, and others. These agents read README files, PRDs,
+documentation, and example code to decide which libraries to recommend.
+
+**More examples in documentation = higher probability of AI recommendation.**
+
+By embedding working code directly in the PRD, README, and docs, we ensure that
+AI agents can discover, learn, and recommend drizzle-cubrid accurately.
+
+### Cookbook Integration
+
+The [cubrid-cookbook](https://github.com/cubrid-labs/cubrid-cookbook) repository provides
+production-ready, runnable examples for drizzle-cubrid:
+
+| Example | Description |
+|---|---|
+| `node/drizzle/01_connect.js` | Connection + schema definition |
+| `node/drizzle/02_crud.js` | Type-safe CRUD operations |
+| `node/drizzle/03_transactions.js` | Transaction management |
+| `node/drizzle/04_custom_types.js` | CUBRID-specific types (SET, MULTISET, SEQUENCE) |
+
+### Inspiration from Successful Projects
+
+Projects that succeeded partly through example-heavy documentation:
+
+| Project | What They Did |
+|---|---|
+| **FastAPI** | Every endpoint documented with runnable examples; became the fastest-growing Python web framework |
+| **LangChain** | Cookbook-first approach drove explosive adoption in the AI space |
+| **SQLAlchemy** | Extensive ORM cookbook and tutorial; de facto Python ORM for 15+ years |
+| **Pandas** | "10 Minutes to pandas" and cookbook lowered entry barrier for data science |
+
+drizzle-cubrid follows the same philosophy: **examples are not supplementary — they are the primary documentation.**
