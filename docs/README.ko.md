@@ -23,7 +23,7 @@ CUBRID는 한국 공공기관 및 기업 환경에서 널리 사용되는 고성
 
 - **완전한 타입 안전성**을 갖춘 TypeScript 우선 Drizzle ORM 다이얼렉트
 - **49개 오프라인 테스트**, **99% 이상의 코드 커버리지**
-- [`@cubrid/client`](https://github.com/cubrid-labs/cubrid-client) 기반 — 모던 TypeScript CUBRID 드라이버
+- [`cubrid-client`](https://github.com/cubrid-labs/cubrid-client) 기반 — 모던 TypeScript CUBRID 드라이버
 - CUBRID 고유 타입 지원: `SET`, `MULTISET`, `SEQUENCE`, `MONETARY`
 - drizzle-orm의 `mysql-core`를 통한 MySQL 호환 SQL 생성
 - 세이브포인트를 활용한 트랜잭션 지원
@@ -32,12 +32,12 @@ CUBRID는 한국 공공기관 및 기업 환경에서 널리 사용되는 고성
 
 - Node.js 18+
 - Drizzle ORM 0.38+
-- [@cubrid/client](https://github.com/cubrid-labs/cubrid-client) 0.1.0+
+- [cubrid-client](https://github.com/cubrid-labs/cubrid-client) 0.1.0+
 
 ## 설치
 
 ```bash
-npm install drizzle-cubrid drizzle-orm @cubrid/client
+npm install drizzle-cubrid drizzle-orm cubrid-client
 ```
 
 ## 빠른 시작
@@ -57,7 +57,7 @@ export const users = cubridTable('users', {
 ### 쿼리
 
 ```typescript
-import { createClient } from '@cubrid/client';
+import { createClient } from 'cubrid-client';
 import { drizzle } from 'drizzle-cubrid';
 import { eq } from 'drizzle-orm';
 import { users } from './schema';
@@ -116,7 +116,7 @@ await db.transaction(async (tx) => {
 
 | 계층 | 패키지 | 설명 |
 |------|---------|------|
-| 드라이버 | [@cubrid/client](https://github.com/cubrid-labs/cubrid-client) | TypeScript CUBRID 드라이버 |
+| 드라이버 | [cubrid-client](https://github.com/cubrid-labs/cubrid-client) | TypeScript CUBRID 드라이버 |
 | ORM 다이얼렉트 | [drizzle-cubrid](https://github.com/cubrid-labs/drizzle-cubrid) | Drizzle ORM 다이얼렉트 (이 패키지) |
 | Python 드라이버 | [pycubrid](https://github.com/cubrid-labs/pycubrid) | 순수 Python CUBRID 드라이버 |
 | Python ORM | [sqlalchemy-cubrid](https://github.com/cubrid-labs/sqlalchemy-cubrid) | SQLAlchemy 2.0 다이얼렉트 |

@@ -23,7 +23,7 @@ Drizzle ORM dialect for CUBRID.
 
 - TypeScript-first Drizzle ORM dialect with **full type safety**
 - **49 offline tests** with **99%+ code coverage**
-- Built on [`@cubrid/client`](https://github.com/cubrid-labs/cubrid-client) — modern TypeScript CUBRID driver
+- Built on [`cubrid-client`](https://github.com/cubrid-labs/cubrid-client) — modern TypeScript CUBRID driver
 - CUBRID-specific types: `SET`, `MULTISET`, `SEQUENCE`, `MONETARY`
 - MySQL-compatible SQL generation via drizzle-orm's `mysql-core`
 - Transaction support with savepoints
@@ -32,12 +32,12 @@ Drizzle ORM dialect for CUBRID.
 
 - Node.js 18+
 - Drizzle ORM 0.38+
-- [@cubrid/client](https://github.com/cubrid-labs/cubrid-client) 0.1.0+
+- [cubrid-client](https://github.com/cubrid-labs/cubrid-client) 0.1.0+
 
 ## Installation
 
 ```bash
-npm install drizzle-cubrid drizzle-orm @cubrid/client
+npm install drizzle-cubrid drizzle-orm cubrid-client
 ```
 
 ## Quick Start
@@ -57,7 +57,7 @@ export const users = cubridTable('users', {
 ### Query
 
 ```typescript
-import { createClient } from '@cubrid/client';
+import { createClient } from 'cubrid-client';
 import { drizzle } from 'drizzle-cubrid';
 import { eq } from 'drizzle-orm';
 import { users } from './schema';
@@ -116,7 +116,7 @@ await db.transaction(async (tx) => {
 
 | Layer | Package | Description |
 |-------|---------|-------------|
-| Driver | [@cubrid/client](https://github.com/cubrid-labs/cubrid-client) | TypeScript CUBRID driver |
+| Driver | [cubrid-client](https://github.com/cubrid-labs/cubrid-client) | TypeScript CUBRID driver |
 | ORM Dialect | [drizzle-cubrid](https://github.com/cubrid-labs/drizzle-cubrid) | Drizzle ORM dialect (this package) |
 | Python Driver | [pycubrid](https://github.com/cubrid-labs/pycubrid) | Pure Python CUBRID driver |
 | Python ORM | [sqlalchemy-cubrid](https://github.com/cubrid-labs/sqlalchemy-cubrid) | SQLAlchemy 2.0 dialect |

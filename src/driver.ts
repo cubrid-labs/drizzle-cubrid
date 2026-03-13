@@ -1,4 +1,4 @@
-import type { CubridClient } from '@cubrid/client';
+import type { CubridClient } from 'cubrid-client';
 import { entityKind } from 'drizzle-orm/entity';
 import { DefaultLogger } from 'drizzle-orm/logger';
 import type { Logger } from 'drizzle-orm/logger';

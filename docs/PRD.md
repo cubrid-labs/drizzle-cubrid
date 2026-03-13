@@ -4,7 +4,7 @@
 
 **drizzle-cubrid** is a Drizzle ORM dialect for the CUBRID relational database. It extends
 Drizzle's `mysql-core` infrastructure to provide type-safe schema definitions, query building,
-and migration support for CUBRID databases via the `@cubrid/client` TypeScript driver.
+and migration support for CUBRID databases via the `cubrid-client` TypeScript driver.
 
 - **Package**: `drizzle-cubrid`
 - **Language**: TypeScript (ES2022+, strict mode)
@@ -22,7 +22,7 @@ dialect for CUBRID. Developers using CUBRID must fall back to raw SQL or use leg
 
 1. **Full Drizzle ORM integration** — schema definitions, type-safe queries, relations
 2. **CUBRID-specific features** — SET/MULTISET/SEQUENCE types, MERGE INTO, ON DUPLICATE KEY UPDATE
-3. **Driver bridge** — wraps `@cubrid/client` (`CubridClient`) into Drizzle's session/query system
+3. **Driver bridge** — wraps `cubrid-client` (`CubridClient`) into Drizzle's session/query system
 4. **Transaction support** — full transaction lifecycle including nested savepoints (with CUBRID's no-RELEASE-SAVEPOINT limitation)
 5. **Migration-ready** — compatible with `drizzle-kit` for schema generation
 6. **Type safety** — full TypeScript generics, no `any` escapes
@@ -30,9 +30,9 @@ dialect for CUBRID. Developers using CUBRID must fall back to raw SQL or use leg
 
 ## Non-Goals
 
-- Connection pooling (responsibility of `@cubrid/client` or user code)
+- Connection pooling (responsibility of `cubrid-client` or user code)
 - ORM-level caching (Drizzle provides this at the core level)
-- Support for drivers other than `@cubrid/client` (can be added later)
+- Support for drivers other than `cubrid-client` (can be added later)
 - Prisma or TypeORM integration
 
 ## Architecture
@@ -69,7 +69,7 @@ drizzle-cubrid/                  (our package)
 
 1. **User calls `drizzle(client)`** — creates `CubridDatabase` instance
 2. **`CubridDatabase`** extends `MySqlDatabase` — gets all query builders for free
-3. **`CubridSession`** extends `MySqlSession` — bridges `@cubrid/client` queries
+3. **`CubridSession`** extends `MySqlSession` — bridges `cubrid-client` queries
 4. **`CubridPreparedQuery`** extends `MySqlPreparedQuery` — executes SQL via client.query()
 5. **`CubridTransaction`** extends `MySqlTransaction` — uses begin/commit/rollback via client.transaction()
 6. **`MySqlDialect`** is reused directly — CUBRID SQL is MySQL-compatible for most operations
@@ -99,7 +99,7 @@ drizzle-cubrid/                  (our package)
 
 ```typescript
 import { drizzle } from 'drizzle-cubrid';
-import { createClient } from '@cubrid/client';
+import { createClient } from 'cubrid-client';
 import { cubridTable, int, varchar, autoIncrement, primaryKey } from 'drizzle-cubrid';
 
 // Define schema
@@ -153,7 +153,7 @@ const products = cubridTable('products', {
 
 ### Runtime
 - `drizzle-orm` >= 0.38.0 (peer dependency)
-- `@cubrid/client` >= 0.1.0 (peer dependency)
+- `cubrid-client` >= 0.1.0 (peer dependency)
 
 ### Development
 - `typescript` ^5.7

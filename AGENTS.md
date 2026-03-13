@@ -6,7 +6,7 @@ Project knowledge base for AI coding agents.
 
 **drizzle-cubrid** is a Drizzle ORM dialect for the CUBRID relational database.
 It extends Drizzle's `mysql-core` infrastructure to provide type-safe schema definitions,
-query building, and migration support for CUBRID via the `@cubrid/client` TypeScript driver.
+query building, and migration support for CUBRID via the `cubrid-client` TypeScript driver.
 
 - **Language**: TypeScript (ES2022+, strict mode)
 - **Framework**: Drizzle ORM (mysql-core)
@@ -45,7 +45,7 @@ drizzle-cubrid/
 | Module | Role |
 |---|---|
 | `driver.ts` | `CubridDriver` class creates sessions. `CubridDatabase` extends `MySqlDatabase`. `drizzle()` factory function creates database instance from `CubridClient`. |
-| `session.ts` | `CubridSession` extends `MySqlSession` — bridges `@cubrid/client` into Drizzle's query system. `CubridPreparedQuery` extends `MySqlPreparedQuery` — executes SQL via `client.query()`. `CubridTransaction` extends `MySqlTransaction` — transaction lifecycle. |
+| `session.ts` | `CubridSession` extends `MySqlSession` — bridges `cubrid-client` into Drizzle's query system. `CubridPreparedQuery` extends `MySqlPreparedQuery` — executes SQL via `client.query()`. `CubridTransaction` extends `MySqlTransaction` — transaction lifecycle. |
 | `columns.ts` | Re-exports all mysql-core column types + defines CUBRID-specific columns (SET, MULTISET, SEQUENCE, MONETARY). |
 | `table.ts` | `cubridTable()` — table schema builder function (wraps `mysqlTable` with CUBRID defaults). |
 | `types.ts` | Custom Drizzle column types for CUBRID: `CubridSet`, `CubridMultiset`, `CubridSequence`, `CubridMonetary`. |
@@ -60,7 +60,7 @@ MySqlDialect (from mysql-core)     — SQL generation (reused as-is)
     ↓
 MySqlSession (abstract)            — Session interface
     ↓
-CubridSession (our impl)          — Bridges @cubrid/client
+CubridSession (our impl)          — Bridges cubrid-client
     ↓
 CubridPreparedQuery (our impl)    — Executes queries via client.query()
     ↓
@@ -71,10 +71,10 @@ CubridDatabase extends MySqlDatabase — User-facing database instance
 drizzle(client) factory            — Entry point
 ```
 
-### @cubrid/client API (Driver We Wrap)
+### cubrid-client API (Driver We Wrap)
 
 ```typescript
-// Key interfaces from @cubrid/client
+// Key interfaces from cubrid-client
 interface CubridClient {
   query<T>(sql: string, params?: QueryParams): Promise<T[]>;
   transaction<T>(callback: (tx: TransactionClient) => Promise<T>): Promise<T>;
@@ -174,7 +174,7 @@ tests/
 
 ### Testing Approach
 
-- **Unit tests** — mock `@cubrid/client` with fake implementations
+- **Unit tests** — mock `cubrid-client` with fake implementations
 - **Query tests** — use Drizzle's `drizzle.mock()` or equivalent for SQL generation verification
 - **Integration tests** — real CUBRID via Docker, guarded by env var
 
@@ -204,7 +204,7 @@ tests/
 ```
 SQLAlchemy URL: cubrid://user:password@host:port/dbname
 CUBRID native:  CUBRID:host:port:dbname:::
-@cubrid/client: createClient({ host, port, database, user, password })
+cubrid-client: createClient({ host, port, database, user, password })
 ```
 
 ## CI/CD
