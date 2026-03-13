@@ -1,6 +1,6 @@
 # drizzle-cubrid
 
-**Drizzle ORM dialect for CUBRID database**
+**Drizzle ORM dialect for the CUBRID database** — TypeScript-first, type-safe schema definition and query builder for Node.js.
 
 [🇰🇷 한국어](docs/README.ko.md) · [🇺🇸 English](README.md)
 

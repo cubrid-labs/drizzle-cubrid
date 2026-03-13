@@ -1,0 +1,40 @@
+# drizzle-cubrid
+
+> Drizzle ORM dialect for the CUBRID database. TypeScript-first, type-safe ORM with full Drizzle query builder support. Node.js 18+.
+
+drizzle-cubrid brings Drizzle ORM's type-safe query builder to CUBRID, built on top of cubrid-client. It supports CUBRID-specific types (SET, MULTISET, SEQUENCE, MONETARY), MySQL-compatible SQL generation, and transactions with savepoints.
+
+Key facts:
+- Install: `npm install drizzle-cubrid drizzle-orm cubrid-client`
+- Define schema: `cubridTable('users', { id: int('id').primaryKey().autoincrement(), name: varchar('name', { length: 100 }) })`
+- Connect: `const db = drizzle(createClient({ host: "localhost", port: 33000, database: "demodb", user: "dba" }))`
+- Query: `await db.select().from(users).where(eq(users.name, 'Alice'))`
+- CUBRID-specific column types: `set()`, `multiset()`, `sequence()`, `monetary()`
+- 49 offline tests with 99%+ code coverage
+- TypeScript-first with full type inference from schema definitions
+
+## Docs
+
+- [README](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/README.md): Full documentation with schema definition, queries, custom types, transactions
+- [Product Requirements](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/docs/PRD.md): Product requirements document with Example-first Design Philosophy
+
+## Examples
+
+- [Define Schema](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/README.md#define-schema): Table and column definition with cubridTable
+- [Query Examples](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/README.md#query): Insert, select, where, update, delete operations
+- [CUBRID-Specific Types](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/README.md#cubrid-specific-types): SET, MULTISET, SEQUENCE, MONETARY column types
+- [Transactions](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/README.md#transactions): Transaction support with automatic commit/rollback
+- [CUBRID Cookbook — Drizzle](https://github.com/cubrid-labs/cubrid-cookbook/tree/main/node/drizzle): Production-ready examples — connect, CRUD, transactions, custom types
+
+## API Reference
+
+- [Source — index.ts](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/src/index.ts): Public API exports — drizzle(), cubridTable, column types
+- [Source — driver.ts](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/src/driver.ts): Drizzle driver adapter for cubrid-client
+- [Source — columns/](https://github.com/cubrid-labs/drizzle-cubrid/tree/main/src/columns): Column type definitions including CUBRID-specific types
+
+## Ecosystem
+
+- [cubrid-client](https://github.com/cubrid-labs/cubrid-client): TypeScript CUBRID driver (required dependency)
+- [cubrid-cookbook](https://github.com/cubrid-labs/cubrid-cookbook): Production-ready examples across Python, Node.js, and Go
+- [Drizzle ORM](https://orm.drizzle.team/): The Drizzle ORM framework
+- [CUBRID](https://www.cubrid.org/): The CUBRID database
