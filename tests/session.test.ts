@@ -419,6 +419,87 @@ describe('CubridSession', () => {
 	});
 });
 
+describe('CubridSession with transactional client', () => {
+	class TransactionalMockClient implements CubridQueryable {
+		queries: { sql: string; params?: readonly unknown[] }[] = [];
+		results: unknown[][] = [];
+		beginCalls = 0;
+		commitCalls = 0;
+		rollbackCalls = 0;
+
+		async query<T extends Record<string, unknown>>(sqlText: string, params?: readonly unknown[]): Promise<T[]> {
+			this.queries.push({ sql: sqlText, params });
+			return (this.results.shift() ?? []) as T[];
+		}
+
+		async beginTransaction(): Promise<void> {
+			this.beginCalls++;
+		}
+
+		async commit(): Promise<void> {
+			this.commitCalls++;
+		}
+
+		async rollback(): Promise<void> {
+			this.rollbackCalls++;
+		}
+	}
+
+	it('transaction() without config uses client.beginTransaction and client.commit', async () => {
+		const client = new TransactionalMockClient();
+		const dialect = new MySqlDialect({});
+		const session = new CubridSession(client, dialect, undefined, { mode: 'default' });
+
+		const result = await session.transaction(async (tx) => {
+			await tx.execute(sql`select ${1}`);
+			return 'done';
+		});
+
+		expect(result).toBe('done');
+		expect(client.beginCalls).toBe(1);
+		expect(client.commitCalls).toBe(1);
+		expect(client.rollbackCalls).toBe(0);
+		// Should NOT have sql begin/commit — uses native methods instead
+		const lowerQueries = client.queries.map((q) => q.sql.toLowerCase());
+		expect(lowerQueries).not.toContain('begin');
+		expect(lowerQueries).not.toContain('commit');
+	});
+
+	it('transaction() with config uses client.beginTransaction after set transaction', async () => {
+		const client = new TransactionalMockClient();
+		const dialect = new MySqlDialect({});
+		const session = new CubridSession(client, dialect, undefined, { mode: 'default' });
+
+		const config: MySqlTransactionConfig = {
+			isolationLevel: 'serializable',
+		};
+
+		await session.transaction(async () => 'ok', config);
+
+		expect(client.beginCalls).toBe(1);
+		expect(client.commitCalls).toBe(1);
+		// set transaction should be executed via SQL before native beginTransaction
+		expect(client.queries[0]?.sql.toLowerCase()).toContain('set transaction');
+	});
+
+	it('transaction() rolls back via client.rollback on error', async () => {
+		const client = new TransactionalMockClient();
+		const dialect = new MySqlDialect({});
+		const session = new CubridSession(client, dialect, undefined, { mode: 'default' });
+		const expectedError = new Error('tx-fail');
+
+		await expect(
+			session.transaction(async () => {
+				throw expectedError;
+			}),
+		).rejects.toBe(expectedError);
+
+		expect(client.beginCalls).toBe(1);
+		expect(client.rollbackCalls).toBe(1);
+		expect(client.commitCalls).toBe(0);
+	});
+});
+
 describe('CubridTransaction', () => {
 	it('nested transaction creates savepoints', async () => {
 		const client = new MockClient();
