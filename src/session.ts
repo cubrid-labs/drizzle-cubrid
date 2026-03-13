@@ -27,6 +27,9 @@ export type CubridRawQueryResult = QueryRow[];
 
 export interface CubridQueryable {
 	query<T extends QueryRow = QueryRow>(sql: string, params?: readonly unknown[]): Promise<T[]>;
+	beginTransaction?(): Promise<void>;
+	commit?(): Promise<void>;
+	rollback?(): Promise<void>;
 }
 
 interface CubridSessionOptions {
@@ -206,24 +209,41 @@ export class CubridSession<
 			this.mode,
 		);
 
-		if (config) {
-			const setTransactionConfigSql = this.getSetTransactionSQL(config);
-			if (setTransactionConfigSql) {
-				await tx.execute(setTransactionConfigSql);
+		if (typeof this.client.beginTransaction === 'function') {
+			if (config) {
+				const setTransactionConfigSql = this.getSetTransactionSQL(config);
+				if (setTransactionConfigSql) {
+					await tx.execute(setTransactionConfigSql);
+				}
 			}
-
-			const startTransactionSql = this.getStartTransactionSQL(config);
-			await tx.execute(startTransactionSql ?? sql`begin`);
+			await this.client.beginTransaction();
 		} else {
-			await tx.execute(sql`begin`);
+			if (config) {
+				const setTransactionConfigSql = this.getSetTransactionSQL(config);
+				if (setTransactionConfigSql) {
+					await tx.execute(setTransactionConfigSql);
+				}
+				const startTransactionSql = this.getStartTransactionSQL(config);
+				await tx.execute(startTransactionSql ?? sql`begin`);
+			} else {
+				await tx.execute(sql`begin`);
+			}
 		}
 
 		try {
 			const result = await transaction(tx);
-			await tx.execute(sql`commit`);
+			if (typeof this.client.commit === 'function') {
+				await this.client.commit();
+			} else {
+				await tx.execute(sql`commit`);
+			}
 			return result;
 		} catch (error) {
-			await tx.execute(sql`rollback`);
+			if (typeof this.client.rollback === 'function') {
+				await this.client.rollback();
+			} else {
+				await tx.execute(sql`rollback`);
+			}
 			throw error;
 		}
 	}
