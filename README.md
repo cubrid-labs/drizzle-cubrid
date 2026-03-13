@@ -19,116 +19,264 @@
 
 ## Why drizzle-cubrid?
 
-CUBRID is a high-performance open-source relational database, widely adopted in
-Korean public-sector and enterprise applications. Until now, there was no
-Drizzle ORM dialect for CUBRID.
+[Drizzle ORM](https://orm.drizzle.team/) is a modern TypeScript ORM with a SQL-like query API, zero dependencies, and first-class type inference. Until now, there was no Drizzle dialect for CUBRID.
 
-**drizzle-cubrid** bridges that gap:
+`drizzle-cubrid` bridges that gap:
 
-- TypeScript-first Drizzle ORM dialect with **full type safety**
-- **49 offline tests** with **99%+ code coverage**
-- Built on [`cubrid-client`](https://github.com/cubrid-labs/cubrid-client) — modern TypeScript CUBRID driver
-- CUBRID-specific types: `SET`, `MULTISET`, `SEQUENCE`, `MONETARY`
-- MySQL-compatible SQL generation via drizzle-orm's `mysql-core`
-- Transaction support with savepoints
-
-## Requirements
-
-- Node.js 18+
-- Drizzle ORM 0.38+
-- [cubrid-client](https://github.com/cubrid-labs/cubrid-client) 0.1.0+
+- **Type-safe queries** — Full TypeScript inference from schema to query results
+- **Drizzle query API** — `select()`, `insert()`, `update()`, `delete()` with the familiar Drizzle chain syntax
+- **CUBRID-specific types** — `SET`, `MULTISET`, `SEQUENCE`, `MONETARY` as native column builders
+- **Transactions with savepoints** — Nested transaction support via CUBRID savepoints
+- **Relations** — Drizzle relational query API (`db.query.users.findMany({ with: { posts: true } })`)
+- **99%+ test coverage** — 52 offline tests, no database required for CI
 
 ## Installation
 
 ```bash
-npm install drizzle-cubrid drizzle-orm cubrid-client
+npm install drizzle-cubrid drizzle-orm cubrid-client node-cubrid
 ```
+
+| Package | Purpose |
+|---------|---------|
+| `drizzle-cubrid` | CUBRID dialect for Drizzle (this package) |
+| `drizzle-orm` | Drizzle ORM core |
+| `cubrid-client` | TypeScript CUBRID driver |
+| `node-cubrid` | Low-level CUBRID protocol driver |
+
+**Requirements**: Node.js 18+, CUBRID 10.2+
 
 ## Quick Start
 
-### Define Schema
+### 1. Define Your Schema
 
-```typescript
-import { cubridTable, int, varchar } from 'drizzle-cubrid';
+```ts
+// schema.ts
+import { cubridTable, int, varchar, timestamp } from "drizzle-cubrid";
 
-export const users = cubridTable('users', {
-  id: int('id').primaryKey().autoincrement(),
-  name: varchar('name', { length: 100 }).notNull(),
-  email: varchar('email', { length: 200 }).unique(),
+export const users = cubridTable("users", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 100 }).notNull(),
+  email: varchar("email", { length: 200 }).notNull().unique(),
+  created_at: timestamp("created_at").defaultNow(),
 });
 ```
 
-### Query
+### 2. Connect and Query
 
-```typescript
-import { createClient } from 'cubrid-client';
-import { drizzle } from 'drizzle-cubrid';
-import { eq } from 'drizzle-orm';
-import { users } from './schema';
+```ts
+// app.ts
+import { createClient } from "cubrid-client";
+import { drizzle } from "drizzle-cubrid";
+import { eq } from "drizzle-cubrid";
+import { users } from "./schema";
 
 const client = createClient({
-  host: 'localhost',
+  host: "localhost",
   port: 33000,
-  database: 'demodb',
-  user: 'dba',
+  database: "demodb",
+  user: "dba",
 });
 
 const db = drizzle(client);
 
 // Insert
-await db.insert(users).values({ name: 'Alice', email: 'alice@example.com' });
+await db.insert(users).values({
+  name: "Alice",
+  email: "alice@example.com",
+});
 
-// Select
+// Select with type-safe results
 const allUsers = await db.select().from(users);
+// allUsers: { id: number; name: string; email: string; created_at: Date | null }[]
 
 // Where clause
-const alice = await db.select().from(users).where(eq(users.name, 'Alice'));
+const alice = await db
+  .select()
+  .from(users)
+  .where(eq(users.name, "Alice"));
 
 // Update
-await db.update(users).set({ name: 'Bob' }).where(eq(users.id, 1));
+await db
+  .update(users)
+  .set({ name: "Alicia" })
+  .where(eq(users.id, 1));
 
 // Delete
 await db.delete(users).where(eq(users.id, 1));
+
+// Close connection
+await client.close();
 ```
 
-## CUBRID-Specific Types
+## CUBRID-Specific Column Types
 
-```typescript
-import { cubridTable, int, varchar } from 'drizzle-cubrid';
-import { set, multiset, sequence, monetary } from 'drizzle-cubrid';
+Beyond standard SQL types, CUBRID has collection types and a monetary type:
 
-export const products = cubridTable('products', {
-  id: int('id').primaryKey().autoincrement(),
-  name: varchar('name', { length: 100 }),
-  tags: set('tags', 'VARCHAR(50)'),
-  categories: multiset('categories', 'VARCHAR(50)'),
-  rankings: sequence('rankings', 'INTEGER'),
-  price: monetary('price'),
+```ts
+import { cubridTable, int, varchar } from "drizzle-cubrid";
+import { set, multiset, sequence, monetary } from "drizzle-cubrid";
+
+export const products = cubridTable("products", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 100 }),
+
+  // SET — unordered unique values → SET(VARCHAR(50))
+  tags: set("tags", { type: "VARCHAR", length: 50 }),
+
+  // MULTISET — unordered, allows duplicates → MULTISET(VARCHAR(50))
+  categories: multiset("categories", { type: "VARCHAR", length: 50 }),
+
+  // SEQUENCE — ordered, allows duplicates → SEQUENCE(INTEGER)
+  rankings: sequence("rankings", { type: "INTEGER" }),
+
+  // MONETARY — CUBRID native monetary type → MONETARY
+  price: monetary("price"),
 });
+```
+
+```ts
+// Insert with collection values
+await db.insert(products).values({
+  name: "Widget",
+  tags: ["sale", "new"],           // string[] → SET
+  categories: ["electronics"],     // string[] → MULTISET
+  rankings: ["1", "3", "5"],       // string[] → SEQUENCE
+});
+
+// Select — collections return string[]
+const rows = await db.select().from(products);
+console.log(rows[0].tags); // ["sale", "new"]
 ```
 
 ## Transactions
 
-```typescript
+### Automatic (Recommended)
+
+```ts
 await db.transaction(async (tx) => {
-  await tx.insert(users).values({ name: 'Alice', email: 'alice@example.com' });
-  await tx.insert(users).values({ name: 'Bob', email: 'bob@example.com' });
+  await tx.insert(users).values({ name: "Alice", email: "a@example.com" });
+  await tx.insert(users).values({ name: "Bob", email: "b@example.com" });
+  // Auto-committed on success, auto-rolled back on error
 });
+```
+
+### Nested Transactions (Savepoints)
+
+```ts
+await db.transaction(async (tx) => {
+  await tx.insert(users).values({ name: "Alice", email: "a@example.com" });
+
+  try {
+    await tx.transaction(async (tx2) => {
+      // SAVEPOINT sp1
+      await tx2.insert(users).values({ name: "Bob", email: "b@example.com" });
+      throw new Error("rollback inner only");
+      // ROLLBACK TO SAVEPOINT sp1
+    });
+  } catch {
+    // Inner rolled back, outer continues
+  }
+
+  await tx.insert(users).values({ name: "Charlie", email: "c@example.com" });
+  // Alice + Charlie committed, Bob rolled back
+});
+```
+
+## Relations
+
+```ts
+import { cubridTable, int, varchar } from "drizzle-cubrid";
+import { relations } from "drizzle-orm";
+
+export const users = cubridTable("users", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 100 }).notNull(),
+});
+
+export const posts = cubridTable("posts", {
+  id: int("id").primaryKey().autoincrement(),
+  title: varchar("title", { length: 200 }).notNull(),
+  author_id: int("author_id").notNull(),
+});
+
+export const usersRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+}));
+
+export const postsRelations = relations(posts, ({ one }) => ({
+  author: one(users, {
+    fields: [posts.author_id],
+    references: [users.id],
+  }),
+}));
+```
+
+```ts
+import * as schema from "./schema";
+
+const db = drizzle(client, { schema, mode: "default" });
+
+const usersWithPosts = await db.query.users.findMany({
+  with: { posts: true },
+});
+```
+
+## Error Handling
+
+Errors propagate from `cubrid-client` with structured error types:
+
+```ts
+import { ConnectionError, QueryError, TransactionError } from "cubrid-client";
+
+try {
+  await db.select().from(users);
+} catch (error) {
+  if (error instanceof QueryError) {
+    console.error("Query failed:", error.message);
+    console.error("Cause:", error.cause);
+  }
+}
+```
+
+## CUBRID Limitations
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| `INSERT ... RETURNING` | ❌ Not supported | Use separate SELECT after INSERT |
+| Streaming / iterators | ❌ Not supported | Use LIMIT/OFFSET for pagination |
+| JSON columns | ❌ Not supported | Use VARCHAR with manual serialization |
+| Native BOOLEAN | ❌ Not supported | Mapped to SMALLINT (0/1) |
+| Sequences | ❌ Not supported | Use AUTO_INCREMENT |
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Schema Guide](docs/SCHEMA.md) | Column types, CUBRID types, relations, custom types |
+| [Queries Guide](docs/QUERIES.md) | SELECT, INSERT, UPDATE, DELETE, joins, aggregations, raw SQL |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common errors, TypeScript issues, performance tips |
+
+## Development
+
+```bash
+git clone https://github.com/cubrid-labs/drizzle-cubrid.git
+cd drizzle-cubrid
+npm install
+npm run build        # TypeScript compilation
+npm run check        # Lint + type-check + test
+npm test             # Run tests
 ```
 
 ## Ecosystem
 
-| Layer | Package | Description |
-|-------|---------|-------------|
-| Driver | [cubrid-client](https://github.com/cubrid-labs/cubrid-client) | TypeScript CUBRID driver |
-| ORM Dialect | [drizzle-cubrid](https://github.com/cubrid-labs/drizzle-cubrid) | Drizzle ORM dialect (this package) |
-| Python Driver | [pycubrid](https://github.com/cubrid-labs/pycubrid) | Pure Python CUBRID driver |
-| Python ORM | [sqlalchemy-cubrid](https://github.com/cubrid-labs/sqlalchemy-cubrid) | SQLAlchemy 2.0 dialect |
-| Cookbook | [cubrid-cookbook](https://github.com/cubrid-labs/cubrid-cookbook) | Usage examples & recipes |
-
-## Contributing
-
-Contributions welcome! Please open an issue or submit a pull request.
+| Package | Description |
+|---------|-------------|
+| [cubrid-client](https://github.com/cubrid-labs/cubrid-client) | TypeScript CUBRID driver |
+| [drizzle-cubrid](https://github.com/cubrid-labs/drizzle-cubrid) | Drizzle ORM dialect (this package) |
+| [pycubrid](https://github.com/cubrid-labs/pycubrid) | Python DB-API 2.0 driver |
+| [sqlalchemy-cubrid](https://github.com/cubrid-labs/sqlalchemy-cubrid) | SQLAlchemy 2.0 dialect |
+| [cubrid-go](https://github.com/cubrid-labs/cubrid-go) | Go database/sql driver + GORM |
+| [cubrid-cookbook](https://github.com/cubrid-labs/cubrid-cookbook) | Framework integration examples |
 
 ## License
 
