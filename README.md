@@ -4,12 +4,16 @@
 
 [🇰🇷 한국어](docs/README.ko.md) · [🇺🇸 English](README.md)
 
-[![npm](https://img.shields.io/npm/v/drizzle-cubrid.svg)](https://www.npmjs.com/package/drizzle-cubrid)
-[![CI](https://github.com/cubrid-labs/drizzle-cubrid/actions/workflows/ci.yml/badge.svg)](https://github.com/cubrid-labs/drizzle-cubrid/actions/workflows/ci.yml)
+<!-- BADGES:START -->
+[![npm version](https://img.shields.io/npm/v/drizzle-cubrid)](https://www.npmjs.com/package/drizzle-cubrid)
+[![node version](https://img.shields.io/node/v/drizzle-cubrid)](https://nodejs.org)
+[![ci workflow](https://github.com/cubrid-labs/drizzle-cubrid/actions/workflows/ci.yml/badge.svg)](https://github.com/cubrid-labs/drizzle-cubrid/actions/workflows/ci.yml)
+[![license](https://img.shields.io/github/license/cubrid-labs/drizzle-cubrid)](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/cubrid-labs/drizzle-cubrid)](https://github.com/cubrid-labs/drizzle-cubrid)
 [![Node.js 18+](https://img.shields.io/badge/node-18%2B-blue.svg)](https://nodejs.org/)
 [![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-0.38-green.svg)](https://orm.drizzle.team/)
 [![Coverage 99%](https://img.shields.io/badge/coverage-99%25-brightgreen.svg)](https://github.com/cubrid-labs/drizzle-cubrid)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<!-- BADGES:END -->
 
 ---
 
