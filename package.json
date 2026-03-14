@@ -54,7 +54,7 @@
     "cubrid-client": ">=0.1.0"
   },
   "devDependencies": {
-    "cubrid-client": "file:../cubrid-client",
+    "cubrid-client": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "@vitest/coverage-v8": "^3.0.0",
