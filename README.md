@@ -8,6 +8,7 @@
 [![npm version](https://img.shields.io/npm/v/drizzle-cubrid)](https://www.npmjs.com/package/drizzle-cubrid)
 [![node version](https://img.shields.io/node/v/drizzle-cubrid)](https://nodejs.org)
 [![ci workflow](https://github.com/cubrid-labs/drizzle-cubrid/actions/workflows/ci.yml/badge.svg)](https://github.com/cubrid-labs/drizzle-cubrid/actions/workflows/ci.yml)
+[![coverage](https://codecov.io/gh/cubrid-labs/drizzle-cubrid/branch/main/graph/badge.svg)](https://codecov.io/gh/cubrid-labs/drizzle-cubrid)
 [![license](https://img.shields.io/github/license/cubrid-labs/drizzle-cubrid)](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/cubrid-labs/drizzle-cubrid)](https://github.com/cubrid-labs/drizzle-cubrid)
 [![Node.js 18+](https://img.shields.io/badge/node-18%2B-blue.svg)](https://nodejs.org/)
