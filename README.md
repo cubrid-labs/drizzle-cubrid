@@ -34,7 +34,7 @@
 ## Installation
 
 ```bash
-npm install drizzle-cubrid drizzle-orm cubrid-client node-cubrid
+npm install drizzle-cubrid drizzle-orm cubrid-client
 ```
 
 | Package | Purpose |
@@ -42,7 +42,6 @@ npm install drizzle-cubrid drizzle-orm cubrid-client node-cubrid
 | `drizzle-cubrid` | CUBRID dialect for Drizzle (this package) |
 | `drizzle-orm` | Drizzle ORM core |
 | `cubrid-client` | TypeScript CUBRID driver |
-| `node-cubrid` | Low-level CUBRID protocol driver |
 
 **Requirements**: Node.js 18+, CUBRID 10.2+
 

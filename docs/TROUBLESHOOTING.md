@@ -13,14 +13,14 @@ npm warn peer drizzle-orm@">=0.38" from drizzle-cubrid@0.2.0
 Install all required peer dependencies:
 
 ```bash
-npm install drizzle-cubrid drizzle-orm cubrid-client node-cubrid
+npm install drizzle-cubrid drizzle-orm cubrid-client
 ```
 
 The dependency chain is:
 
 ```
 drizzle-cubrid → drizzle-orm (query building)
-               → cubrid-client (connection) → node-cubrid (CUBRID protocol)
+               → cubrid-client (native CAS protocol)
 ```
 
 ### `Cannot find module 'drizzle-cubrid'`
