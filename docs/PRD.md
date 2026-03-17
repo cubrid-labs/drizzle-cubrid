@@ -39,30 +39,29 @@ dialect for CUBRID. Developers using CUBRID must fall back to raw SQL or use leg
 
 ### Drizzle ORM Extension Model
 
-```
-drizzle-orm/mysql-core/          (base — imported as dependency)
-├── dialect.ts                   MySqlDialect — SQL generation
-├── session.ts                   MySqlSession, MySqlPreparedQuery, MySqlTransaction (abstract)
-├── db.ts                        MySqlDatabase
-├── table.ts                     MySqlTable
-├── columns/                     Column type definitions
-└── query-builders/              SELECT, INSERT, UPDATE, DELETE builders
+```mermaid
+flowchart TD
+    A[drizzle-orm/mysql-core<br/>base dependency] --> A1[dialect.ts - MySqlDialect SQL generation]
+    A --> A2[session.ts - Abstract session and transaction classes]
+    A --> A3[db.ts - MySqlDatabase]
+    A --> A4[table.ts - MySqlTable]
+    A --> A5[columns/ - Column type definitions]
+    A --> A6[query-builders/ - SELECT, INSERT, UPDATE, DELETE]
 
-drizzle-cubrid/                  (our package)
-├── src/
-│   ├── index.ts                 Public API — drizzle(), schema exports, type exports
-│   ├── driver.ts                drizzle() factory, CubridDatabase, CubridDriver
-│   ├── session.ts               CubridSession, CubridPreparedQuery, CubridTransaction
-│   ├── columns.ts               CUBRID-specific column types (re-export mysql-core + custom)
-│   ├── table.ts                 cubridTable() schema builder
-│   └── types.ts                 CUBRID-specific types: SET, MULTISET, SEQUENCE, MONETARY
-└── tests/
-    ├── session.test.ts          Session/PreparedQuery/Transaction tests
-    ├── driver.test.ts           drizzle() factory tests
-    ├── columns.test.ts          Column type compilation tests
-    ├── types.test.ts            Custom type tests
-    ├── query.test.ts            Query builder integration tests
-    └── integration.test.ts      Live DB tests (Docker)
+    B[drizzle-cubrid<br/>our package] --> B1[src/]
+    B1 --> B11[index.ts - Public API exports]
+    B1 --> B12[driver.ts - drizzle factory and driver]
+    B1 --> B13[session.ts - Session, prepared query, transaction]
+    B1 --> B14[columns.ts - mysql-core re-exports plus CUBRID columns]
+    B1 --> B15[table.ts - cubridTable schema builder]
+    B1 --> B16[types.ts - SET, MULTISET, SEQUENCE, MONETARY]
+    B --> B2[tests/]
+    B2 --> B21[session.test.ts - Session and transaction tests]
+    B2 --> B22[driver.test.ts - drizzle factory tests]
+    B2 --> B23[columns.test.ts - Column compilation tests]
+    B2 --> B24[types.test.ts - Custom type tests]
+    B2 --> B25[query.test.ts - Query builder integration tests]
+    B2 --> B26[integration.test.ts - Live DB tests]
 ```
 
 ### How It Works

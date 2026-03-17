@@ -28,6 +28,16 @@
 - **Relations** — Drizzle relational query API (`db.query.users.findMany({ with: { posts: true } })`)
 - **99%+ test coverage** — 52 offline tests, no database required for CI
 
+### Architecture
+
+```mermaid
+flowchart TD
+    A[Application] --> B[Drizzle ORM]
+    B --> C[drizzle-cubrid dialect<br/>CubridDialect]
+    C --> D[cubrid-client]
+    D --> E[CUBRID Server]
+```
+
 ## Installation
 
 ```bash

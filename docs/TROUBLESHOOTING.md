@@ -18,9 +18,10 @@ npm install drizzle-cubrid drizzle-orm cubrid-client
 
 The dependency chain is:
 
-```
-drizzle-cubrid → drizzle-orm (query building)
-               → cubrid-client (native CAS protocol)
+```mermaid
+flowchart TD
+    A[drizzle-cubrid] --> B[drizzle-orm<br/>query building]
+    A --> C[cubrid-client<br/>native CAS protocol]
 ```
 
 ### `Cannot find module 'drizzle-cubrid'`
