@@ -11,9 +11,6 @@
 [![coverage](https://codecov.io/gh/cubrid-labs/drizzle-cubrid/branch/main/graph/badge.svg)](https://codecov.io/gh/cubrid-labs/drizzle-cubrid)
 [![license](https://img.shields.io/github/license/cubrid-labs/drizzle-cubrid)](https://github.com/cubrid-labs/drizzle-cubrid/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/cubrid-labs/drizzle-cubrid)](https://github.com/cubrid-labs/drizzle-cubrid)
-[![Node.js 18+](https://img.shields.io/badge/node-18%2B-blue.svg)](https://nodejs.org/)
-[![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-0.38-green.svg)](https://orm.drizzle.team/)
-[![Coverage 99%](https://img.shields.io/badge/coverage-99%25-brightgreen.svg)](https://github.com/cubrid-labs/drizzle-cubrid)
 <!-- BADGES:END -->
 
 ---
@@ -293,6 +290,7 @@ Performance benchmarks comparing CUBRID drivers against MySQL are tracked in the
 | [cubrid-rs](https://github.com/cubrid-labs/cubrid-rs) | Native Rust database driver for CUBRID (sync + async, pure Rust) |
 | [sea-orm-cubrid](https://github.com/cubrid-labs/sea-orm-cubrid) | SeaORM backend for CUBRID |
 | [cubrid-cookbook](https://github.com/cubrid-labs/cubrid-cookbook) | Framework integration examples |
+| [cubrid-benchmark](https://github.com/cubrid-labs/cubrid-benchmark) | Multi-language benchmark suite |
 
 ## License
 
