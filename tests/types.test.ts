@@ -1,34 +1,53 @@
 import { int, varchar } from '../src/columns';
+import { cubridMultiset, cubridSequence, cubridSet } from '../src/columns/collections';
 import { cubridTable } from '../src/table';
 import { monetary, multiset, sequence, set } from '../src/types';
 
 describe('collection and monetary types', () => {
-	it('set dataType SQL is generated correctly', () => {
+	it('cubridSet dataType SQL is generated correctly', () => {
 		const table = cubridTable('set_types', {
-			tags: set('tags', { type: 'varchar', length: 50 }),
-			numbers: set('numbers', { type: 'int' }),
-			prices: set('prices', { type: 'numeric', precision: 10, scale: 2 }),
+			tags: cubridSet('tags', { element: varchar('tag_item', { length: 100 }) }),
+			numbers: cubridSet('numbers', { element: int('set_item') }),
 		});
 
-		expect(table.tags.getSQLType()).toBe('SET(VARCHAR(50))');
-		expect(table.numbers.getSQLType()).toBe('SET(INT)');
-		expect(table.prices.getSQLType()).toBe('SET(NUMERIC(10,2))');
+		expect(table.tags.getSQLType()).toBe('SET(VARCHAR(100))');
+		expect(table.numbers.getSQLType()).toBe('SET(INTEGER)');
 	});
 
-	it('multiset dataType SQL is generated correctly', () => {
+	it('cubridMultiset dataType SQL is generated correctly', () => {
 		const table = cubridTable('multiset_types', {
-			tags: multiset('tags', { type: 'varchar', length: 20 }),
+			tags: cubridMultiset('tags', { element: int('multi_item') }),
 		});
 
-		expect(table.tags.getSQLType()).toBe('MULTISET(VARCHAR(20))');
+		expect(table.tags.getSQLType()).toBe('MULTISET(INTEGER)');
 	});
 
-	it('sequence dataType SQL is generated correctly', () => {
+	it('cubridSequence dataType SQL is generated correctly', () => {
 		const table = cubridTable('sequence_types', {
-			values: sequence('values', { type: 'int' }),
+			values: cubridSequence('values', { element: varchar('sequence_item', { length: 200 }) }),
 		});
 
-		expect(table.values.getSQLType()).toBe('SEQUENCE(INT)');
+		expect(table.values.getSQLType()).toBe('SEQUENCE(VARCHAR(200))');
+	});
+
+	it('collection builders use default element type when not provided', () => {
+		const table = cubridTable('default_collection_types', {
+			tags: cubridSet('tags'),
+		});
+
+		expect(table.tags.getSQLType()).toBe('SET(VARCHAR(100))');
+	});
+
+	it('collection aliases keep backward compatibility', () => {
+		const table = cubridTable('alias_types', {
+			a: set('a', { element: varchar('v', { length: 30 }) }),
+			b: multiset('b', { element: int('n') }),
+			c: sequence('c', { element: varchar('s', { length: 40 }) }),
+		});
+
+		expect(table.a.getSQLType()).toBe('SET(VARCHAR(30))');
+		expect(table.b.getSQLType()).toBe('MULTISET(INTEGER)');
+		expect(table.c.getSQLType()).toBe('SEQUENCE(VARCHAR(40))');
 	});
 
 	it('monetary dataType returns MONETARY', () => {
@@ -41,16 +60,16 @@ describe('collection and monetary types', () => {
 
 	it('collection fromDriver parses brace syntax to array', () => {
 		const table = cubridTable('parse_types', {
-			tags: set('tags', { type: 'varchar', length: 50 }),
+			tags: cubridSet('tags', { element: varchar('tag_item', { length: 50 }) }),
 		});
 
-		expect(table.tags.mapFromDriverValue('{a,b,c}')).toEqual(['a', 'b', 'c']);
+		expect(table.tags.mapFromDriverValue("{'a','b','c'}")).toEqual(['a', 'b', 'c']);
 		expect(table.tags.mapFromDriverValue('a,b,c')).toEqual(['a', 'b', 'c']);
 	});
 
 	it('collection fromDriver handles empty string and {}', () => {
 		const table = cubridTable('parse_empty_types', {
-			tags: multiset('tags', { type: 'varchar', length: 50 }),
+			tags: cubridMultiset('tags', { element: varchar('tag_item', { length: 50 }) }),
 		});
 
 		expect(table.tags.mapFromDriverValue('')).toEqual([]);
@@ -59,10 +78,11 @@ describe('collection and monetary types', () => {
 
 	it('collection toDriver formats arrays into braces', () => {
 		const table = cubridTable('format_types', {
-			items: sequence('items', { type: 'int' }),
+			items: cubridSequence('items', { element: int('item_id') }),
 		});
 
-		expect(table.items.mapToDriverValue(['a', 'b', 'c'])).toBe('{a,b,c}');
+		expect(table.items.mapToDriverValue(['a', 'b', 'c'])).toBe("{'a','b','c'}");
+		expect(table.items.mapToDriverValue(["a'b"])).toBe("{'a''b'}");
 		expect(table.items.mapToDriverValue([])).toBe('{}');
 	});
 
@@ -70,7 +90,7 @@ describe('collection and monetary types', () => {
 		const table = cubridTable('mixed_types', {
 			id: int('id').primaryKey().autoincrement(),
 			name: varchar('name', { length: 100 }),
-			tags: set('tags', { type: 'varchar', length: 32 }),
+			tags: cubridSet('tags', { element: varchar('tag_item', { length: 32 }) }),
 		});
 
 		expect(table.id.getSQLType()).toBe('int');

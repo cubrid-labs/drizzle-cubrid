@@ -4,6 +4,14 @@ export type { CubridQueryable, CubridRawQueryResult } from './session.js';
 
 export { cubridTable } from './table.js';
 export * from './columns.js';
+export {
+	cubridMultiset,
+	type CubridMultisetColumnBuilder,
+	cubridSequence,
+	type CubridSequenceColumnBuilder,
+	cubridSet,
+	type CubridSetColumnBuilder,
+} from './columns/collections.js';
 
 export { monetary, multiset, sequence, set } from './types.js';
 

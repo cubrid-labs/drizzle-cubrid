@@ -25,3 +25,5 @@ export { tinyint } from 'drizzle-orm/mysql-core/columns/tinyint';
 export { varbinary } from 'drizzle-orm/mysql-core/columns/varbinary';
 export { varchar } from 'drizzle-orm/mysql-core/columns/varchar';
 export { year } from 'drizzle-orm/mysql-core/columns/year';
+
+export { cubridMultiset, cubridSequence, cubridSet } from './columns/collections.js';

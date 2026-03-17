@@ -9,6 +9,9 @@ describe('columns exports', () => {
 		expect(typeof columns.datetime).toBe('function');
 		expect(typeof columns.boolean).toBe('function');
 		expect(typeof columns.timestamp).toBe('function');
+		expect(typeof columns.cubridSet).toBe('function');
+		expect(typeof columns.cubridMultiset).toBe('function');
+		expect(typeof columns.cubridSequence).toBe('function');
 	});
 
 	it('does not export json builder', () => {

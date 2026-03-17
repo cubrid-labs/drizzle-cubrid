@@ -114,20 +114,20 @@ Beyond standard SQL types, CUBRID has collection types and a monetary type:
 
 ```ts
 import { cubridTable, int, varchar } from "drizzle-cubrid";
-import { set, multiset, sequence, monetary } from "drizzle-cubrid";
+import { cubridSet, cubridMultiset, cubridSequence, monetary } from "drizzle-cubrid";
 
 export const products = cubridTable("products", {
   id: int("id").primaryKey().autoincrement(),
   name: varchar("name", { length: 100 }),
 
   // SET — unordered unique values → SET(VARCHAR(50))
-  tags: set("tags", { type: "VARCHAR", length: 50 }),
+  tags: cubridSet("tags", { element: varchar("tag_item", { length: 50 }) }),
 
   // MULTISET — unordered, allows duplicates → MULTISET(VARCHAR(50))
-  categories: multiset("categories", { type: "VARCHAR", length: 50 }),
+  categories: cubridMultiset("categories", { element: varchar("category_item", { length: 50 }) }),
 
   // SEQUENCE — ordered, allows duplicates → SEQUENCE(INTEGER)
-  rankings: sequence("rankings", { type: "INTEGER" }),
+  rankings: cubridSequence("rankings", { element: int("rank_item") }),
 
   // MONETARY — CUBRID native monetary type → MONETARY
   price: monetary("price"),
@@ -255,6 +255,7 @@ try {
 | [Schema Guide](docs/SCHEMA.md) | Column types, CUBRID types, relations, custom types |
 | [Queries Guide](docs/QUERIES.md) | SELECT, INSERT, UPDATE, DELETE, joins, aggregations, raw SQL |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Common errors, TypeScript issues, performance tips |
+| [Migration Example](examples/migration/README.md) | Drizzle Kit config, schema, and CUBRID migration notes |
 
 ## Development
 
