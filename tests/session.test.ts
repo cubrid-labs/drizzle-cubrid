@@ -1,6 +1,7 @@
 import { entityKind } from 'drizzle-orm/entity';
 import type { Logger } from 'drizzle-orm/logger';
 import { MySqlDialect } from 'drizzle-orm/mysql-core/dialect';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
 	MySqlPreparedQueryConfig,
 	MySqlSession as MySqlSessionBase,
@@ -94,6 +95,9 @@ describe('CubridPreparedQuery', () => {
 			['x'],
 			logger,
 			undefined,
+			undefined,
+			undefined,
+			undefined,
 		);
 
 		const result = await query.execute();
@@ -117,6 +121,9 @@ describe('CubridPreparedQuery', () => {
 			'select id, token from users',
 			[],
 			logger,
+			undefined,
+			undefined,
+			undefined,
 			fields,
 		);
 
@@ -143,6 +150,9 @@ describe('CubridPreparedQuery', () => {
 			'select id, token from users',
 			[],
 			logger,
+			undefined,
+			undefined,
+			undefined,
 			undefined,
 			customMapper,
 		);
@@ -171,6 +181,9 @@ describe('CubridPreparedQuery', () => {
 			[],
 			logger,
 			undefined,
+			undefined,
+			undefined,
+			undefined,
 			customMapper,
 		);
 
@@ -196,6 +209,9 @@ describe('CubridPreparedQuery', () => {
 			undefined,
 			undefined,
 			undefined,
+			undefined,
+			undefined,
+			undefined,
 			returningIds,
 		);
 
@@ -218,6 +234,9 @@ describe('CubridPreparedQuery', () => {
 			logger,
 			undefined,
 			undefined,
+			undefined,
+			undefined,
+			undefined,
 			generatedIds,
 			returningIds,
 		);
@@ -238,6 +257,9 @@ describe('CubridPreparedQuery', () => {
 			'insert into users (token) values (?)',
 			['a'],
 			logger,
+			undefined,
+			undefined,
+			undefined,
 			undefined,
 			undefined,
 			undefined,
@@ -265,6 +287,9 @@ describe('CubridPreparedQuery', () => {
 			undefined,
 			undefined,
 			undefined,
+			undefined,
+			undefined,
+			undefined,
 			returningIds,
 		);
 
@@ -283,6 +308,9 @@ describe('CubridPreparedQuery', () => {
 			'select * from users where id = ?',
 			[sql.placeholder('id')],
 			logger,
+			undefined,
+			undefined,
+			undefined,
 			undefined,
 		);
 
@@ -303,6 +331,9 @@ describe('CubridPreparedQuery', () => {
 			'select id from users',
 			[],
 			logger,
+			undefined,
+			undefined,
+			undefined,
 			fields,
 		);
 
@@ -320,6 +351,9 @@ describe('CubridPreparedQuery', () => {
 			'select 1',
 			[],
 			logger,
+			undefined,
+			undefined,
+			undefined,
 			undefined,
 		);
 

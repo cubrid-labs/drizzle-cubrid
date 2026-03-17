@@ -1,4 +1,6 @@
 import { Column } from 'drizzle-orm/column';
+import type { Cache } from 'drizzle-orm/cache/core/cache';
+import type { WithCacheConfig } from 'drizzle-orm/cache/core/types';
 import { entityKind, is } from 'drizzle-orm/entity';
 import type { Logger } from 'drizzle-orm/logger';
 import { NoopLogger } from 'drizzle-orm/logger';
@@ -78,12 +80,17 @@ export class CubridPreparedQuery<T extends MySqlPreparedQueryConfig> extends MyS
 		private queryString: string,
 		private params: unknown[],
 		private logger: Logger,
+		cache: Cache | undefined,
+		queryMetadata:
+			| { type: 'select' | 'update' | 'delete' | 'insert'; tables: string[] }
+			| undefined,
+		cacheConfig: WithCacheConfig | undefined,
 		private fields: SelectedFieldsOrdered | undefined,
 		private customResultMapper?: (rows: unknown[][]) => T['execute'],
 		private generatedIds?: Record<string, unknown>[],
 		private returningIds?: SelectedFieldsOrdered,
 	) {
-		super();
+		super(cache, queryMetadata, cacheConfig);
 	}
 
 	async execute(placeholderValues: Record<string, unknown> = {}): Promise<T['execute']> {
@@ -175,12 +182,17 @@ export class CubridSession<
 		customResultMapper?: (rows: unknown[][]) => T['execute'],
 		generatedIds?: Record<string, unknown>[],
 		returningIds?: SelectedFieldsOrdered,
+		queryMetadata?: { type: 'select' | 'update' | 'delete' | 'insert'; tables: string[] },
+		cacheConfig?: WithCacheConfig,
 	): PreparedQueryKind<CubridPreparedQueryHKT, T> {
 		return new CubridPreparedQuery(
 			this.client,
 			query.sql,
 			query.params,
 			this.logger,
+			undefined,
+			queryMetadata,
+			cacheConfig,
 			fields,
 			customResultMapper,
 			generatedIds,
