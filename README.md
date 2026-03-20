@@ -302,6 +302,12 @@ Performance benchmarks comparing CUBRID drivers against MySQL are tracked in the
 | [cubrid-cookbook](https://github.com/cubrid-labs/cubrid-cookbook) | Framework integration examples |
 | [cubrid-benchmark](https://github.com/cubrid-labs/cubrid-benchmark) | Multi-language benchmark suite |
 
+## Roadmap
+
+See [`ROADMAP.md`](ROADMAP.md) for this project's direction and next milestones.
+
+For the ecosystem-wide view, see the [CUBRID Labs Ecosystem Roadmap](https://github.com/cubrid-labs/.github/blob/main/ROADMAP.md) and [Project Board](https://github.com/orgs/cubrid-labs/projects/2).
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
